@@ -133,8 +133,13 @@ public class AutoMod {
 			ArrayList<String> postInfo = postList.get(j);
 			WebElement thisPost = driver.findElement(By.className(
 					"id-"+postInfo.get(0)));
-			String timeTag = thisPost.findElement(By.tagName("time")).getText()
-					.split(" ")[1];
+			String timeTag = "";
+			try {
+				timeTag = thisPost.findElement(By.tagName("time"))
+						.getText().split(" ")[1];
+			} catch(java.lang.ArrayIndexOutOfBoundsException e) {
+				continue;
+			}
 			if((!timeTag.contains("second") && !timeTag.contains("minute") && 
 					!timeTag.contains("hour")))
 				removalList.add(j);
@@ -397,9 +402,15 @@ public class AutoMod {
 				// add to agedposts if older than 24 hr,
 				for(int j = 0; j<postList.size(); j++ ) {
 					String thisPostID = roughPostIds.get(q);
-					String timeTag = driver.findElement(By.className(
+					String timeTag = "";
+					try {
+						timeTag = driver.findElement(By.className(
 							"id-"+thisPostID)).findElement(By.tagName("time"))
 							.getText().split(" ")[1];
+					} catch(java.lang.ArrayIndexOutOfBoundsException e) {
+						continue;
+					}
+							
 					if(!timeTag.contains("second") && !timeTag.contains(
 							"minute") && !timeTag.contains("hour"))
 						agedPostIds.add(thisPostID);
@@ -434,6 +445,10 @@ public class AutoMod {
 						if(!comText.contains("discuss")) newCom = new Integer(
 								comText);
 						if(newCom > oldCom) 
+							driver.findElement(By.className("id-"+
+									roughPostIds.get(u))).findElement(By.
+											className("comments")).click();
+							waitForElement(driver,"commenttextarea");
 							moderateComments(driver, driver.findElement(By
 									.className("id-"+roughPostIds.get(u))));
 						// set archived # comments
@@ -618,10 +633,6 @@ public class AutoMod {
 	 * @param post The post to check comments in
 	 */
 	public static void moderateComments(WebDriver driver, WebElement post) {
-		post.findElement(By.className("comments")).click();
-		System.out.println("inspecting comments in post with ID: "
-				+post.getAttribute("data-fullname")+"...");
-		waitForElement(driver,"commenttextarea");
 		// load ALL the comments
 		while(driver.findElements(By.id("loadmorebutton")).size() != 0) {
 			driver.findElement(By.id("loadmorebutton")).click();
