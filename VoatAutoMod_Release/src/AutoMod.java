@@ -422,7 +422,7 @@ public class AutoMod {
 			}
 			
 			// check comments on posts with more comments than before
-			for(int u=roughPosts.size()-1; u>=0; u++) {
+			for(int u=roughPosts.size()-1; u>=0; u--) {
 				for(int v=0; v<postList.size(); v++) {
 					if(roughPostIds.get(u).contains(postList.get(v).get(0))) {
 						int oldCom = new Integer(postList.get(v).get(1));
