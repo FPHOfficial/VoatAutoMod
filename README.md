@@ -44,6 +44,10 @@ GLOBAL VARIABLES (and what they do):
 
 *commBan - List of strings which if found in a comment will cause AutoMod to delete a comment.
 
+*domainBan - List of domain names which will cause a comment or post to be removed if they're linked to
+
+*subBan - List of subverse names that will cause a comment or post to be removed if they're linked to
+
 *postMode - Enum specifying what mode the subverse is in. Any post that is not of the type set here will be deleted.
 
 *flairs - List of flairs that the users use. These must be strings of the lowercase version of what users would put inside square brackets.
