@@ -21,7 +21,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
  * advanced functionality needs to be programmed in.                         *
  * Detailed information is in the README.txt, which should be included.      *
  * @author mikex5                                                            *
- * @version 0.2                                                              *
+ * @version 0.2.2                                                            *
 \*****************************************************************************/
 
 public class AutoMod {
@@ -43,6 +43,9 @@ public class AutoMod {
 	// List of strings that will warrant removing posts or comments
 	// WARNING: the strings are check without context eg. ho is detected in how
 	// also, words should be lowercase since strings are converted to lowercase
+	// GOOD FORMAT: {"badword","badword[ h]","bad string of words"};
+	// Use regex like the middle to catch 'ass' or 'asshole' but not 'assassin'
+	// BAD FORMAT: {"BadWord","BAD","WORD"};
 	
 	// List of strings not allowed in titles
 	static String[] titleBan = {};
@@ -299,7 +302,7 @@ public class AutoMod {
 			            .findElement(By.className("may-blank")).getAttribute(
 			            		"href").toLowerCase();
 				for(int i=0; i<subBan.length; i++) {
-					if(postURL.contains("voat.co/v/"+subBan[i])) {
+					if(postURL.contains("voat.co/v/"+subBan[i]+"/")) {
 					    //if you don't want to post a comment, delete from here
 					    postComment(driver,
 					        "This submission is being deleted because it"
@@ -391,7 +394,7 @@ public class AutoMod {
 				// add to postList
 				addToPostList(driver.findElement(By.className(
 						"id-"+newPostIds.get(m))), postList);
-				driver.navigate().back();
+				driver.get(mainPage);
 				waitForElement(driver,"submission");
 			}
 			
@@ -407,7 +410,8 @@ public class AutoMod {
 						timeTag = driver.findElement(By.className(
 							"id-"+thisPostID)).findElement(By.tagName("time"))
 							.getText().split(" ")[1];
-					} catch(java.lang.ArrayIndexOutOfBoundsException e) {
+					}
+					catch(java.lang.ArrayIndexOutOfBoundsException e) {
 						continue;
 					}
 							
@@ -416,7 +420,6 @@ public class AutoMod {
 						agedPostIds.add(thisPostID);
 				}
 			}
-			
 			// check between agedposts and oldposts, add differences to
 			// differenceIds
 			ArrayList<String> differenceIds = new ArrayList<String>();
@@ -444,13 +447,14 @@ public class AutoMod {
 								.split(" ")[0];
 						if(!comText.contains("discuss")) newCom = new Integer(
 								comText);
-						if(newCom > oldCom) 
+						if(newCom > oldCom) {
 							driver.findElement(By.className("id-"+
 									roughPostIds.get(u))).findElement(By.
 											className("comments")).click();
 							waitForElement(driver,"commenttextarea");
 							moderateComments(driver, driver.findElement(By
 									.className("id-"+roughPostIds.get(u))));
+						}
 						// set archived # comments
 						postList.get(v).set(1, Integer.toString(newCom));
 					}
@@ -515,12 +519,12 @@ public class AutoMod {
 					 * reCaptcha, otherwise it'll get stuck!
 					if(d == 0 && !dated1) {
 						dated1 = true;
-						postText(driver,"Test post, please ignore.","Allan "
-							+"Please Add Details",true);
+						postText(driver,"Test post, please ignore",
+								"Allan, please add details",false);
 						// flair the post, leave commented if no flairs used
-						//tooManyButtons(driver,"main","flair");
-						//waitForElement(driver,"btn-xs");
-						//tooManyButtons(driver,"btn-xs","FLAIRNAME");
+						tooManyButtons(driver,"main","flair");
+						waitForElement(driver,"btn-xs");
+						tooManyButtons(driver,"btn-xs","Referendum");
 						driver.get(mainPage);
 					}
 					 *
@@ -536,7 +540,7 @@ public class AutoMod {
 					//etc...
 				}
 			}
-			driver.navigate().back();
+			driver.get(mainPage);
 			waitForElement(driver,"submission");
 
 			// clean up lists to fix memory leaking (kinda)
@@ -666,7 +670,9 @@ public class AutoMod {
 					By.tagName("a"));
 			for(int j=0; j<commLinks.size(); j++) {
 			    for(int i=0; i<domainBan.length; i++) {
-			        if(commLinks.get(j).getAttribute("href").toLowerCase()
+			    	String checAtt = commLinks.get(j).getAttribute("href");
+			    	if(checAtt==null) break;
+			        if(checAtt.toLowerCase()
 			        		.contains(domainBan[i])) {
 			            // if you don't want a comment to be posted, delete 
 			        	// from here...
@@ -694,7 +700,7 @@ public class AutoMod {
 			    }
 			    for(int k=0; k<subBan.length; k++) {
 			    	if(commLinks.get(j).getAttribute("href").toLowerCase()
-			    			.contains("voat.co/v/"+subBan[k])) {
+			    			.contains("voat.co/v/"+subBan[k]+"/")) {
 			            // if you don't want a comment to be posted, delete 
 			        	// from here...
 			            commentReply(driver,newComments.get(b),"Your comment "
@@ -743,7 +749,7 @@ public class AutoMod {
 				}
 			}
 		}
-		driver.navigate().back();
+		driver.get(mainPage);
 		waitForElement(driver,"submission");
 	}
 	
@@ -852,6 +858,7 @@ public class AutoMod {
 				break;
 			}
 		}
+		notTooFast(5);
 		// distinguish
 		if(distinguish) {
 			List<WebElement> findDist = driver.findElements(By.tagName("a"));
@@ -897,6 +904,7 @@ public class AutoMod {
 				break;
 			}
 		}
+		notTooFast(5);
 		// distinguish
 		if(distinguish) {
 			List<WebElement> findDist = driver.findElements(By.tagName("a"));
