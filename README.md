@@ -7,6 +7,8 @@ For technical support, message @mikex5 on Voat, he may or may not answer you bas
 
 CHANGES:
 --------
+0.2.2 - Fixed numerous crashes and hang-ups, now properly supports deleting links to banned sites and subverses.
+
 0.2 - Added support to delete submissions and comments that link to certain domains or subverses, fixed possible issues of old posts being removed prematurely and posts never being removed from postList if they're no longer visable, possible fix for stale references when moderating larger subverses.
 
 
