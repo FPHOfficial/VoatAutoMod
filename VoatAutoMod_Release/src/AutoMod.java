@@ -672,8 +672,7 @@ public class AutoMod {
 			    for(int i=0; i<domainBan.length; i++) {
 			    	String checAtt = commLinks.get(j).getAttribute("href");
 			    	if(checAtt==null) break;
-			        if(checAtt.toLowerCase()
-			        		.contains(domainBan[i])) {
+			        if(checAtt.toLowerCase().contains(domainBan[i])) {
 			            // if you don't want a comment to be posted, delete 
 			        	// from here...
 			            commentReply(driver,newComments.get(b),"Your comment "
@@ -699,8 +698,10 @@ public class AutoMod {
 			        }
 			    }
 			    for(int k=0; k<subBan.length; k++) {
-			    	if(commLinks.get(j).getAttribute("href").toLowerCase()
-			    			.contains("voat.co/v/"+subBan[k]+"/")) {
+			    	String checAtt = commLinks.get(j).getAttribute("href");
+			    	if(checAtt==null) break;
+			    	if(checAtt.toLowerCase().contains("voat.co/v/"+
+			    			subBan[k]+"/")) {
 			            // if you don't want a comment to be posted, delete 
 			        	// from here...
 			            commentReply(driver,newComments.get(b),"Your comment "
