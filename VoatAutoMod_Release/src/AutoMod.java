@@ -672,7 +672,8 @@ public class AutoMod {
 			    for(int i=0; i<domainBan.length; i++) {
 			    	String checAtt = commLinks.get(j).getAttribute("href");
 			    	if(checAtt==null) break;
-			        if(checAtt.toLowerCase().contains(domainBan[i])) {
+			        if(checAtt.toLowerCase()
+			        		.contains(domainBan[i])) {
 			            // if you don't want a comment to be posted, delete 
 			        	// from here...
 			            commentReply(driver,newComments.get(b),"Your comment "
@@ -695,13 +696,15 @@ public class AutoMod {
 			                notTooFast(10);
 			            }
 			            beenDelete = true;
+			            break;
 			        }
 			    }
+			    if(beenDelete) break;
 			    for(int k=0; k<subBan.length; k++) {
 			    	String checAtt = commLinks.get(j).getAttribute("href");
 			    	if(checAtt==null) break;
-			    	if(checAtt.toLowerCase().contains("voat.co/v/"+
-			    			subBan[k]+"/")) {
+			        if(checAtt.toLowerCase().contains("voat.co/v/"
+			        		+subBan[k]+"/")) {
 			            // if you don't want a comment to be posted, delete 
 			        	// from here...
 			            commentReply(driver,newComments.get(b),"Your comment "
@@ -724,29 +727,34 @@ public class AutoMod {
 			                notTooFast(10);
 			            }
 			            beenDelete = true;
+			            break;
 			    	}
 			    }
+			    if(beenDelete) break;
 			}
-			for(int c=0; c<commBan.length; c++) {
-				if(comText.contains(commBan[c])) {
-					commentReply(driver,newComments.get(b),"Your comment has "
-									+"been deleted because it contains the "
-									+"word '"+commBan[c]+".' Please respect "
-									+"this community's rules."
-									+" \n \n Beep. Boop. I am a bot. If you"
-									+" believe this was removed by mistake, "
-									+"send a message to the other mods with a "
-									+"direct link to this post.",true);
-					if(!beenDelete) {
-						newComments.get(b).findElement(By.className(
-								"del-button")).findElement(By.tagName("a"))
+			if(!beenDelete) {
+				for(int c=0; c<commBan.length; c++) {
+					if(comText.contains(commBan[c])) {
+						commentReply(driver,newComments.get(b),"Your comment "
+								+"has been deleted because it contains the "
+								+"word '"+commBan[c]+".' Please respect "
+								+"this community's rules."
+								+" \n \n Beep. Boop. I am a bot. If you"
+								+" believe this was removed by mistake, "
+								+"send a message to the other mods with a "
+								+"direct link to this post.",true);
+						if(!beenDelete) {
+							newComments.get(b).findElement(By.className(
+									"del-button")).findElement(By.tagName("a"))
+									.click();
+							waitForElement(driver, "yes");
+							newComments.get(b).findElement(By.className("yes"))
 								.click();
-						waitForElement(driver, "yes");
-						newComments.get(b).findElement(By.className("yes"))
-							.click();
-						notTooFast(10);
+							notTooFast(10);
+						}
+						beenDelete = true;
+						break;
 					}
-					beenDelete = true;
 				}
 			}
 		}
@@ -859,7 +867,7 @@ public class AutoMod {
 				break;
 			}
 		}
-		notTooFast(5);
+		notTooFast(10);
 		// distinguish
 		if(distinguish) {
 			List<WebElement> findDist = driver.findElements(By.tagName("a"));
@@ -905,7 +913,7 @@ public class AutoMod {
 				break;
 			}
 		}
-		notTooFast(5);
+		notTooFast(10);
 		// distinguish
 		if(distinguish) {
 			List<WebElement> findDist = driver.findElements(By.tagName("a"));
