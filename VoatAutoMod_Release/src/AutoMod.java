@@ -21,7 +21,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
  * advanced functionality needs to be programmed in.                         *
  * Detailed information is in the README.txt, which should be included.      *
  * @author mikex5                                                            *
- * @version 0.2.2                                                            *
+ * @version 0.2.4                                                            *
 \*****************************************************************************/
 
 public class AutoMod {
@@ -642,6 +642,13 @@ public class AutoMod {
 			driver.findElement(By.id("loadmorebutton")).click();
 			notTooFast(5);
 		}
+		// load EVEN MOAR comments
+		while(driver.findElements(By.className("inline-loadcomments-btn"))
+				.size() != 0) {
+			driver.findElement(By.className("inline-loadcomments-btn"))
+				.click();
+			notTooFast(5);
+		}
 		List<WebElement> comments=driver.findElements(By.className("comment"));
 		ArrayList<WebElement> newComments = new ArrayList<WebElement>();
 		for(int a=0; a<comments.size(); a++) {
@@ -649,8 +656,10 @@ public class AutoMod {
 					.tagName("time"));
 			String timestamp = "";
 			for(int i=0; i<times.size(); i++) {
-				if(times.get(i).isDisplayed()) timestamp=times.get(i)
-						.getText();
+				if(times.get(i).isDisplayed()) {
+					timestamp=times.get(i).getText();
+					break;
+				}
 			}
 			if(timestamp=="") continue;
 			int timething = new Integer(timestamp.replaceAll("[^0-9]", ""));
@@ -672,6 +681,8 @@ public class AutoMod {
 			    for(int i=0; i<domainBan.length; i++) {
 			    	String checAtt = commLinks.get(j).getAttribute("href");
 			    	if(checAtt==null) break;
+			    	if(commLinks.get(j).getAttribute("class").contains(
+			    			"bylink")) break;
 			        if(checAtt.toLowerCase()
 			        		.contains(domainBan[i])) {
 			            // if you don't want a comment to be posted, delete 
@@ -916,7 +927,7 @@ public class AutoMod {
 		notTooFast(10);
 		// distinguish
 		if(distinguish) {
-			List<WebElement> findDist = driver.findElements(By.tagName("a"));
+			List<WebElement> findDist = element.findElements(By.tagName("a"));
 			for(int i=0; i<findDist.size(); i++) {
 				if(findDist.get(i).getText().contains("distinguish")) {
 					findDist.get(i).click();
